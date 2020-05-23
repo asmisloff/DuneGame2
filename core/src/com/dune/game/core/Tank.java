@@ -18,6 +18,8 @@ public class Tank {
     private float moveTimer;
     private float timePerFrame;
 
+    private final Projectile projectile;
+
     public Vector2 getPosition() {
         return position;
     }
@@ -28,6 +30,8 @@ public class Tank {
         this.textures = new TextureRegion(atlas.findRegion("tankanim")).split(64, 64)[0];
         this.speed = 140.0f;
         this.timePerFrame = 0.08f;
+        projectile = new Projectile(atlas, 1280, 720);
+        projectile.setVelocityScale(500);
     }
 
     private int getCurrentFrameIndex() {
@@ -51,9 +55,14 @@ public class Tank {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
-
+            if (!projectile.isActive()) {
+                projectile.setup(position, angle);
+                projectile.setActive(true);
+            }
         }
+
         checkBounds();
+        projectile.update(dt);
     }
 
     public void checkBounds() {
@@ -73,5 +82,6 @@ public class Tank {
 
     public void render(SpriteBatch batch) {
         batch.draw(textures[getCurrentFrameIndex()], position.x - 40, position.y - 40, 40, 40, 80, 80, 1, 1, angle);
+        projectile.render(batch);
     }
 }
